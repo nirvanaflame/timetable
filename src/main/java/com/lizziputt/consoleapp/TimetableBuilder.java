@@ -12,7 +12,7 @@ public class TimetableBuilder {
 
     public static Menu buildMenu() {
         return Menu.builder()
-            .name("# Timetable app #")
+            .name("Timetable app")
             .menus(subMenu())
             .build();
     }
