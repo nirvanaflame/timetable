@@ -45,6 +45,7 @@ cmake-build-*/
 .idea/**/mongoSettings.xml
 .idea
 /target
+/lib
 
 # File-based project format
 *.iws
