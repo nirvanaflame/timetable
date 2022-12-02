@@ -1,5 +1,6 @@
 package com.lizziputt.timetable.subject;
 
+import com.lizziputt.timetable.Printable;
 import com.lizziputt.timetable.jpa.Persistable;
 import com.lizziputt.timetable.timesheet.Timesheet;
 import jakarta.persistence.*;
@@ -17,7 +18,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Entity(name = "Subject")
 @Table(name = "subject")
-public class Subject implements Persistable<Integer> {
+public class Subject implements Persistable<Integer>, Printable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,5 +45,11 @@ public class Subject implements Persistable<Integer> {
     }
 
     public Subject() {
+    }
+
+    @Override
+    public String print() {
+        return "{" + "subjectId=" + subjectId + ", name='" + name + '\'' + '}';
+
     }
 }

@@ -1,4 +1,4 @@
-package com.lizziputt.consoleapp;
+package com.lizziputt.consoleapp.menu;
 
 public enum ExecutionStrategy {
     CLASSROOM_FIND_ALL("CLASSROOM_FIND_ALL"),

@@ -1,11 +1,11 @@
-package com.lizziputt.consoleapp;
+package com.lizziputt.consoleapp.menu;
 
 
 import java.util.List;
 
-import static com.lizziputt.consoleapp.ExecutionStrategy.*;
+import static com.lizziputt.consoleapp.menu.ExecutionStrategy.*;
 
-public class TimetableBuilder {
+public class MenuBuilder {
 
     public static final String EXIT_TXT = "exit";
     public static final String EXIT_CODE = "6";
@@ -58,11 +58,11 @@ public class TimetableBuilder {
         return Menu.builder()
             .name("Students")
             .menuItems(List.of(
-                new Menu.MenuItem("Show all students", STUDENT_FIND_ALL),
-                new Menu.MenuItem("Show student with id", STUDENT_FIND_BY_ID),
-                new Menu.MenuItem("Create student", STUDENT_CREATE),
-                new Menu.MenuItem("Update student with id", STUDENT_UPDATE),
-                new Menu.MenuItem("Remove student with id", STUDENT_REMOVE),
+                new Menu.MenuItem("Show all student groups", STUDENT_FIND_ALL),
+                new Menu.MenuItem("Show student group with id", STUDENT_FIND_BY_ID),
+                new Menu.MenuItem("Create student group", STUDENT_CREATE),
+                new Menu.MenuItem("Update student group with id", STUDENT_UPDATE),
+                new Menu.MenuItem("Remove student group with id", STUDENT_REMOVE),
                 new Menu.MenuItem("Return to previous menu", RETURN)
             )).build();
     }

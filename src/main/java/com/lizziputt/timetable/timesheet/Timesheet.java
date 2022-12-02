@@ -1,5 +1,6 @@
 package com.lizziputt.timetable.timesheet;
 
+import com.lizziputt.timetable.Printable;
 import com.lizziputt.timetable.classroom.Classroom;
 import com.lizziputt.timetable.jpa.Persistable;
 import com.lizziputt.timetable.student.StudentBatch;
@@ -11,10 +12,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
-@ToString
 @EqualsAndHashCode(callSuper = false)
 @Entity(name = "Timesheet")
 @Table(name = "timesheet")
@@ -62,5 +63,23 @@ public class Timesheet implements Persistable<Integer> {
     }
 
     public Timesheet() {
+    }
+
+    @Override
+    public String toString() {
+        return "\n{\n" + "\ttimesheetId:" + timesheetId + ",\n\ttime:" + time + "\n}";
+    }
+
+    public String timeTableView() {
+        return "{\n" + "\ttimesheetId:" + timesheetId + ",\n\ttime:" + time
+                + ",\n\tsubjects:[" + listView(subjects)
+                + "],\n\tclassrooms:[" + listView(classrooms)
+                + "],\n\tstudentBatches:[" + listView(studentBatches)
+                + "],\n\tteachers:[" + listView(teachers) + "]\n}";
+
+    }
+
+    private <T extends Printable> String listView(List<T> list) {
+        return list.stream().map(Printable::print).collect(Collectors.joining("\n"));
     }
 }

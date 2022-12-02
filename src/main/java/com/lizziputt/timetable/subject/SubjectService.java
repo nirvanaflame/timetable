@@ -2,6 +2,7 @@ package com.lizziputt.timetable.subject;
 
 import com.lizziputt.timetable.SimpleMenuService;
 import com.lizziputt.timetable.jpa.CrudRepository;
+import com.lizziputt.util.StringUtils;
 
 import java.util.Optional;
 import java.util.Scanner;
@@ -20,8 +21,8 @@ public class SubjectService extends SimpleMenuService<Subject> {
         Scanner scan = new Scanner(System.in);
         System.out.println("Enter name of a new subject: \n> ");
         String name = scan.nextLine();
-        Subject saved = super.save(new Subject(name));
-        System.out.println("Subject with a name: " + saved.getName().toUpperCase() + " is created");
+        Subject saved = super.save(new Subject(StringUtils.capitalize(name)));
+        System.out.println("Subject with a name: " + saved.getName() + " is created");
     }
 
     public void update() {
@@ -34,8 +35,8 @@ public class SubjectService extends SimpleMenuService<Subject> {
             String name = scan.nextLine();
             subject.setName(name);
             Subject updated = super.update(subject);
-            System.out.println("Subject with a name: " + updated.getName().toUpperCase() + " is updated");
-        }, recordNotFound());
+            System.out.println("Subject with a name: " + updated.getName() + " is updated");
+        }, recordNotFound(id));
     }
 
     @Override

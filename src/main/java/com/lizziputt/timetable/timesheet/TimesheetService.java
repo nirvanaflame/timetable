@@ -10,15 +10,12 @@ import com.lizziputt.timetable.subject.Subject;
 import com.lizziputt.timetable.subject.SubjectService;
 import com.lizziputt.timetable.teacher.Teacher;
 import com.lizziputt.timetable.teacher.TeacherService;
-import jakarta.persistence.EntityNotFoundException;
+import com.lizziputt.util.InputValidator;
+import com.lizziputt.util.StringUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TimesheetService extends SimpleMenuService<Timesheet> {
 
@@ -38,11 +35,27 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
         this.teacherService = teacherService;
     }
 
+    @Override
+    public void printAll() {
+        List<Timesheet> result = crudRepository.findAll();
+        if (result.isEmpty()) System.out.println("Nothing to show!");
+        else System.out.println(result.stream().map(Timesheet::timeTableView).collect(Collectors.joining(",\n")));
+    }
+
+    @Override
+    public void printRecordById() {
+        int id = getIdInput();
+        if (id != 0) crudRepository.findById(id).ifPresentOrElse(timesheet -> {
+            System.out.println(timesheet.timeTableView());
+        }, recordNotFound(id));
+    }
+
     public void create() {
         Scanner scan = new Scanner(System.in);
-        LocalDateTime dateTime = createDateTime(scan);
+        LocalDateTime dateTime = createDateTime();
+        if (dateTime.equals(InputValidator.EXIT_TIME)) return;
 
-        System.out.println("If you don't wanna add subjects/classrooms/students_groups/teachers to the timetable now " + "press enter to skip section or type `skip` to fill timesheet later on");
+        System.out.print("If you don't wanna add subjects/classrooms/students_groups/teachers to the timetable now \nplease type `skip` to do it later or press ENTER to continue...\n> ");
 
         List<Subject> subjects = new ArrayList<>();
         List<Classroom> classrooms = new ArrayList<>();
@@ -65,6 +78,8 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
     }
 
     public void update() {
+        String valid = crudRepository.findAll().stream().map(Timesheet::getTimesheetId).map(String::valueOf).collect(Collectors.joining("|", "[", "]"));
+        System.out.printf("Valid options:%s or type EXIT to return%n> ", valid);
         super.executeAction(this::updateTimetable);
     }
 
@@ -75,55 +90,65 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
         String option = scan.nextLine();
         switch (option) {
             case "time" -> {
-                LocalDateTime newTime = createDateTime(scan);
+                LocalDateTime newTime = createDateTime();
+                if (newTime.equals(InputValidator.EXIT_TIME)) return;
                 timesheet.setTime(newTime);
                 crudRepository.update(timesheet);
             }
             case "subject" -> {
                 List<Subject> currentSubjects = timesheet.getSubjects();
-                List<Subject> newSubjects = addSubject();
                 System.out.println("What you wanna do with subjects?\n" + "Valid options: ext(extend)|rep(replace all)|rem(remove all)");
                 switch (scan.nextLine()) {
-                    case "ext" -> currentSubjects.addAll(newSubjects);
-                    case "rep" -> timesheet.setSubjects(newSubjects);
-                    case "rem" -> currentSubjects.removeAll(newSubjects);
-                    default -> System.out.println("Operation is not supported");
+                    case "ext" -> currentSubjects.addAll(addSubject());
+                    case "rep" -> timesheet.setSubjects(addSubject());
+                    case "rem" -> currentSubjects.removeAll(addSubject());
+                    default -> failOperation();
                 }
                 crudRepository.update(timesheet);
             }
             case "classroom" -> {
                 List<Classroom> currentClassrooms = timesheet.getClassrooms();
-                List<Classroom> newClassrooms = addClassrooms();
                 System.out.println("What you wanna do with classrooms?\n" + "Valid options: ext(extend)|rep(replace all)|rem(remove all)");
                 switch (scan.nextLine()) {
-                    case "ext" -> currentClassrooms.addAll(newClassrooms);
-                    case "rep" -> timesheet.setClassrooms(newClassrooms);
-                    case "rem" -> currentClassrooms.removeAll(newClassrooms);
-                    default -> System.out.println("Operation is not supported");
+                    case "ext" -> currentClassrooms.addAll(addClassrooms());
+                    case "rep" -> timesheet.setClassrooms(addClassrooms());
+                    case "rem" -> currentClassrooms.removeAll(addClassrooms());
+                    default -> failOperation();
                 }
                 crudRepository.update(timesheet);
             }
             case "teacher" -> {
                 List<Teacher> currentTeachers = timesheet.getTeachers();
-                List<Teacher> newTeachers = addTeachers();
-                System.out.println("What you wanna do with teachers?\n" + "Valid options: ext(extend)|rep(replace all)|rem(remove all)");
+                List<Teacher> all = teacherService.findAll();
+
+                System.out.println("What you wanna do with teachers?");
+                System.out.println("Available teachers:" + Arrays.toString(all.toArray()));
+                System.out.print("Valid options: ext(extend)|rep(replace all)|rem(remove all)\n> ");
+
+
                 switch (scan.nextLine()) {
-                    case "ext" -> currentTeachers.addAll(newTeachers);
-                    case "rep" -> timesheet.setTeachers(newTeachers);
-                    case "rem" -> currentTeachers.removeAll(newTeachers);
-                    default -> System.out.println("Operation is not supported");
+                    case "ext" -> {
+                        System.out.println("Type IDs with space to add.(e.g: 1 2 3)\n> ");
+                        List<Integer> ids = InputValidator.validateIds();
+                        if (!ids.isEmpty()) {
+                            List<Teacher> toAdd = all.stream().filter(it -> ids.contains(it.getId())).filter(it -> currentTeachers.stream().noneMatch(cit -> it.getTeacherId().equals(cit.getTeacherId()))).toList();
+                            currentTeachers.addAll(toAdd);
+                        }
+                    }
+                    case "rep" -> timesheet.setTeachers(addTeachers());
+                    case "rem" -> currentTeachers.removeAll(addTeachers());
+                    default -> failOperation();
                 }
                 crudRepository.update(timesheet);
             }
             case "group" -> {
                 List<StudentBatch> currentTeachers = timesheet.getStudentBatches();
-                List<StudentBatch> newTeachers = addGroups();
                 System.out.println("What you wanna do with student groups?\n" + "Valid options: ext(extend)|rep(replace all)|rem(remove all)");
                 switch (scan.nextLine()) {
-                    case "ext" -> currentTeachers.addAll(newTeachers);
-                    case "rep" -> timesheet.setStudentBatches(newTeachers);
-                    case "rem" -> currentTeachers.removeAll(newTeachers);
-                    default -> System.out.println("Operation is not supported");
+                    case "ext" -> currentTeachers.addAll(addGroups());
+                    case "rep" -> timesheet.setStudentBatches(addGroups());
+                    case "rem" -> currentTeachers.removeAll(addGroups());
+                    default -> failOperation();
                 }
                 crudRepository.update(timesheet);
             }
@@ -132,13 +157,25 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
 
     private List<Teacher> addTeachers() {
         Scanner scan = new Scanner(System.in);
+        List<Teacher> all = teacherService.findAll();
+
         ArrayList<Teacher> teachers = new ArrayList<>();
         while (true) {
-            System.out.print("Which student group?\n> ");
-            String name = scan.nextLine();
-            if (name.equals("\n")) break;
-            Teacher teacher = teacherService.findByName(name).orElseThrow(() -> new EntityNotFoundException("Classroom with name: " + name + " is not found"));
-            teachers.add(teacher);
+            System.out.println("Which teacher?");
+            String valid = all.stream().map(teacher -> teacher.getId() + "." + teacher.getFullName()).collect(Collectors.joining("|", "[", "]"));
+
+            System.out.printf("Valid options:%s or type EXIT to return%n> ", valid);
+            String in = scan.nextLine();
+
+            if (in.isBlank()) break;
+            int id = Integer.parseInt(in);
+
+            List<Integer> allIds = all.stream().map(Teacher::getId).toList();
+            if (allIds.contains(id)) {
+                Teacher teacher = all.get(id - 1);
+                teachers.add(teacher);
+                System.out.printf("%s is added!%nPress ENTER to continue, or you can add more teacher to this timeslot.%n", teacher.getFullName());
+            } else recordNotFound(id).run();
         }
         return teachers;
     }
@@ -147,11 +184,15 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
         Scanner scan = new Scanner(System.in);
         ArrayList<StudentBatch> studentBatches = new ArrayList<>();
         while (true) {
-            System.out.print("Which student group?\n> ");
+            System.out.println("Which student group?");
+            String valid = studentService.findAll().stream().map(StudentBatch::getName).collect(Collectors.joining("|", "[", "]"));
+            System.out.printf("Valid options:%s%n> ", valid);
             String name = scan.nextLine();
-            if (name.equals("\n")) break;
-            StudentBatch studentBatch = studentService.findByName(name).orElseThrow(() -> new EntityNotFoundException("Student group with name: " + name + " is not found"));
-            studentBatches.add(studentBatch);
+            if (name.isBlank()) break;
+            studentService.findByName(name).ifPresentOrElse(it -> {
+                studentBatches.add(it);
+                System.out.printf("%s is added!%nPress ENTER to continue, or you can add more student group to this timeslot.%n", name);
+            }, recordNotFound(name));
         }
         return studentBatches;
     }
@@ -160,11 +201,15 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
         Scanner scan = new Scanner(System.in);
         ArrayList<Classroom> classrooms = new ArrayList<>();
         while (true) {
-            System.out.print("Which classroom?\n> ");
+            System.out.println("Which classroom?");
+            String valid = classroomService.findAll().stream().map(Classroom::getName).collect(Collectors.joining("|", "[", "]"));
+            System.out.printf("Valid options:%s%n> ", valid);
             String name = scan.nextLine();
-            if (name.equals("\n")) break;
-            Classroom classroom = classroomService.findByName(name).orElseThrow(() -> new EntityNotFoundException("Classroom with name: " + name + " is not found"));
-            classrooms.add(classroom);
+            if (name.isBlank()) break;
+            classroomService.findByName(name).ifPresentOrElse(it -> {
+                classrooms.add(it);
+                System.out.printf("%s is added!%nPress ENTER to continue, or you can add more subjects to this timeslot.%n", name);
+            }, recordNotFound(name));
         }
         return classrooms;
     }
@@ -173,24 +218,27 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
         Scanner scan = new Scanner(System.in);
         ArrayList<Subject> subjects = new ArrayList<>();
         while (true) {
-            System.out.print("Which subject?\n> ");
+            System.out.println("Which subject?");
+            String valid = subjectService.findAll().stream().map(Subject::getName).collect(Collectors.joining("|", "[", "]"));
+            System.out.printf("Valid options:%s%n> ", valid);
             String name = scan.nextLine();
-            if (name.equals("\n")) break;
-            Subject subject = subjectService.findByName(name).orElseThrow(() -> new EntityNotFoundException("Subject with name: " + name + " is not found"));
-            subjects.add(subject);
+            if (name.isBlank()) break;
+            String capName = StringUtils.capitalize(name);
+            subjectService.findByName(capName).ifPresentOrElse(it -> {
+                subjects.add(it);
+                System.out.printf("%s is added!%nPress ENTER to continue, or you can add more subjects to this timeslot.%n", capName);
+            }, recordNotFound(capName));
         }
 
         return subjects;
     }
 
-    private static LocalDateTime createDateTime(Scanner scan) {
-        System.out.print("Enter time of the class in format: hh:mm:ss\n> ");
-        int[] t = Arrays.stream(scan.nextLine().split(":")).mapToInt(Integer::parseInt).toArray();
+    private static LocalDateTime createDateTime() {
+        return InputValidator.validateTime();
+    }
 
-        System.out.print("Enter date of the class in format: day.month.year\n> ");
-        int[] d = Arrays.stream(scan.nextLine().split("\\.")).mapToInt(Integer::parseInt).toArray();
-
-        return LocalDateTime.of(LocalDate.of(d[2], d[1], d[0]), LocalTime.of(t[0], t[1], t[2]));
+    private static void failOperation() {
+        System.out.println("Operation is not supported!");
     }
 
     @Override

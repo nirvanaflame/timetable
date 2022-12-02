@@ -1,5 +1,7 @@
 package com.lizziputt.consoleapp;
 
+import com.lizziputt.consoleapp.menu.Menu;
+import com.lizziputt.consoleapp.menu.MenuBuilder;
 import com.lizziputt.timetable.classroom.ClassroomService;
 import com.lizziputt.timetable.student.StudentService;
 import com.lizziputt.timetable.subject.SubjectService;
@@ -9,8 +11,8 @@ import com.lizziputt.timetable.timesheet.TimesheetService;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
-import static com.lizziputt.consoleapp.TimetableBuilder.EXIT_CODE;
-import static com.lizziputt.consoleapp.TimetableBuilder.EXIT_TXT;
+import static com.lizziputt.consoleapp.menu.MenuBuilder.EXIT_CODE;
+import static com.lizziputt.consoleapp.menu.MenuBuilder.EXIT_TXT;
 
 public class Application {
 
@@ -23,7 +25,7 @@ public class Application {
         StudentService studentService = context.getStudentService();
 
 
-        Menu timetableMenu = TimetableBuilder.buildMenu();
+        Menu timetableMenu = MenuBuilder.buildMenu();
         timetableMenu.printMenu();
 
         Scanner scan = new Scanner(new InputStreamReader(System.in));

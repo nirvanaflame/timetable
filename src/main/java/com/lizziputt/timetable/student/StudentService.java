@@ -21,7 +21,7 @@ public class StudentService extends SimpleMenuService<StudentBatch> {
         System.out.println("Enter name of a new student group: \n> ");
         String name = scan.nextLine();
         StudentBatch saved = super.save(new StudentBatch(name));
-        System.out.println("Student Group with a name: " + saved.getName().toUpperCase() + " is created");
+        System.out.println("Student Group with a name: " + saved.getName() + " is created");
     }
 
     public void update() {
@@ -34,8 +34,8 @@ public class StudentService extends SimpleMenuService<StudentBatch> {
             String name = scan.nextLine();
             student.setName(name);
             StudentBatch updated = super.update(student);
-            System.out.println("Student group with a name: " + updated.getName().toUpperCase() + " is updated");
-        }, recordNotFound());
+            System.out.println("Student group with a name: " + updated.getName() + " is updated");
+        }, recordNotFound(id));
     }
 
     @Override

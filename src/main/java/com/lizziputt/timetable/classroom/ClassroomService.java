@@ -21,21 +21,21 @@ public class ClassroomService extends SimpleMenuService<Classroom> {
         System.out.println("Enter name of a new classroom: \n> ");
         String name = scan.nextLine();
         Classroom saved = super.save(new Classroom(name));
-        System.out.println("Classroom with a name: " + saved.getName().toUpperCase() + " is created");
+        System.out.println("Classroom with a name: " + saved.getName() + " is created");
     }
 
     public void update() {
         Scanner scan = new Scanner(System.in);
-        System.out.printf("Enter %s id:\n> %n", getEntityName());
+        System.out.printf("Enter %s id:\n> ", getEntityName());
         int id = Integer.parseInt(scan.nextLine());
 
         super.findById(id).ifPresentOrElse(classroom -> {
-            System.out.println("Enter a new classroom name:\n>");
-            String name = getEntityName();
+            System.out.print("Enter a new classroom name:\n> ");
+            String name = scan.nextLine();
             classroom.setName(name);
             Classroom updated = super.update(classroom);
-            System.out.println("Classroom with a name: " + updated.getName().toUpperCase() + " is updated");
-        }, recordNotFound());
+            System.out.println("Classroom with a name: " + updated.getName() + " is updated");
+        }, recordNotFound(id));
     }
 
     @Override

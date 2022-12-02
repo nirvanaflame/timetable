@@ -1,6 +1,7 @@
 package com.lizziputt.timetable;
 
 import com.lizziputt.timetable.jpa.CrudRepository;
+import com.lizziputt.util.InputValidator;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public abstract class SimpleMenuService<T> {
         crudRepository.findById(id).ifPresent(crudRepository::delete);
     }
 
-    protected  <S extends T> S save(S o) {
+    protected <S extends T> S save(S o) {
         return crudRepository.save(o);
     }
 
@@ -25,24 +26,26 @@ public abstract class SimpleMenuService<T> {
         return crudRepository.update(o);
     }
 
-    private List<T> findAll() {
+    public List<T> findAll() {
         return crudRepository.findAll();
     }
 
-    protected Optional<T> findById(Integer id) {
+    public Optional<T> findById(Integer id) {
         return crudRepository.findById(id);
     }
 
     public void printAll() {
         List<T> result = findAll();
-        if (result.isEmpty()) System.out.println("Nothing to show");
+        if (result.isEmpty()) System.out.println("Nothing to show!");
         else result.forEach(System.out::println);
     }
 
     public void delete() {
         int id = getIdInput();
-        delete(id);
-        System.out.printf("Record with %s from %s table is deleted%n", id, getEntityName());
+        if (id != 0) {
+            delete(id);
+            System.out.printf("delete from %s where id=%d%n", getEntityName(), id);
+        }
     }
 
     public void printRecordById() {
@@ -51,20 +54,23 @@ public abstract class SimpleMenuService<T> {
 
     protected void executeAction(Consumer<T> action) {
         int id = getIdInput();
-        findById(id).ifPresentOrElse(action, recordNotFound());
+        if (id != 0) findById(id).ifPresentOrElse(action, recordNotFound(id));
     }
 
     protected String getEntityName() {
         return "";
     }
 
-    protected static Runnable recordNotFound() {
-        return () -> System.out.println("Record is not found");
+    protected static Runnable recordNotFound(int id) {
+        return () -> System.out.printf("Record with id:%s is not found%n", id);
+    }
+
+    protected static Runnable recordNotFound(String name) {
+        return () -> System.out.printf("Record with name:%s is not found%n", name);
     }
 
     protected int getIdInput() {
-        Scanner scan = new Scanner(System.in);
-        System.out.printf("Enter %s id:\n> %n", getEntityName());
-        return Integer.parseInt(scan.nextLine());
+        System.out.printf("Enter %s id:\n> ", getEntityName());
+        return InputValidator.validateId();
     }
 }

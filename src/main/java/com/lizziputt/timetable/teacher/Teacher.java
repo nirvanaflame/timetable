@@ -1,5 +1,6 @@
 package com.lizziputt.timetable.teacher;
 
+import com.lizziputt.timetable.Printable;
 import com.lizziputt.timetable.jpa.Persistable;
 import com.lizziputt.timetable.timesheet.Timesheet;
 import jakarta.persistence.*;
@@ -17,7 +18,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Entity(name = "Teacher")
 @Table(name = "teacher")
-public class Teacher implements Persistable<Integer> {
+public class Teacher implements Persistable<Integer>, Printable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,5 +57,11 @@ public class Teacher implements Persistable<Integer> {
 
     public String getFullName() {
         return String.format("%s %s %s", secondName, firstName, middleName);
+    }
+
+    @Override
+    public String print() {
+        return "{" + "teacherId=" + teacherId + ", firstName='" + firstName + '\'' + ", secondName='" + secondName + '\'' + ", middleName='" + middleName + '\'' + '}';
+
     }
 }

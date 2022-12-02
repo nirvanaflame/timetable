@@ -1,5 +1,6 @@
 package com.lizziputt.timetable.student;
 
+import com.lizziputt.timetable.Printable;
 import com.lizziputt.timetable.jpa.Persistable;
 import com.lizziputt.timetable.timesheet.Timesheet;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Entity(name = "StudentBatch")
 @Table(name = "sudent_batch")
-public class StudentBatch implements Persistable<Integer> {
+public class StudentBatch implements Persistable<Integer>, Printable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,5 +46,11 @@ public class StudentBatch implements Persistable<Integer> {
     }
 
     public StudentBatch() {
+    }
+
+    @Override
+    public String print() {
+        return "{" + "studentBatchId=" + studentBatchId + ", name='" + name + '\'' + '}';
+
     }
 }

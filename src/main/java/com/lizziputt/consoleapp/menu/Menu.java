@@ -1,4 +1,4 @@
-package com.lizziputt.consoleapp;
+package com.lizziputt.consoleapp.menu;
 
 import lombok.Builder;
 import lombok.ToString;
