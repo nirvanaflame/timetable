@@ -1,15 +1,16 @@
-package com.lizziputt.timetable.timesheet;
+package com.lizziputt.consoleapp.service;
 
 import com.lizziputt.timetable.classroom.Classroom;
-import com.lizziputt.timetable.classroom.ClassroomService;
+import com.lizziputt.consoleapp.service.ClassroomService;
 import com.lizziputt.timetable.jpa.CrudRepository;
-import com.lizziputt.timetable.SimpleMenuService;
-import com.lizziputt.timetable.student.StudentBatch;
-import com.lizziputt.timetable.student.StudentService;
+import com.lizziputt.consoleapp.service.SimpleMenuService;
+import com.lizziputt.timetable.student.Student;
+import com.lizziputt.consoleapp.service.StudentService;
 import com.lizziputt.timetable.subject.Subject;
-import com.lizziputt.timetable.subject.SubjectService;
+import com.lizziputt.consoleapp.service.SubjectService;
 import com.lizziputt.timetable.teacher.Teacher;
-import com.lizziputt.timetable.teacher.TeacherService;
+import com.lizziputt.consoleapp.service.TeacherService;
+import com.lizziputt.timetable.timesheet.Timesheet;
 import com.lizziputt.util.InputValidator;
 import com.lizziputt.util.StringUtils;
 
@@ -59,19 +60,19 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
 
         List<Subject> subjects = new ArrayList<>();
         List<Classroom> classrooms = new ArrayList<>();
-        List<StudentBatch> studentBatches = new ArrayList<>();
+        List<Student> students = new ArrayList<>();
         List<Teacher> teachers = new ArrayList<>();
         if (!"skip".equals(scan.nextLine())) {
             subjects = addSubject();
 
             classrooms = addClassrooms();
 
-            studentBatches = addGroups();
+            students = addGroups();
 
             teachers = addTeachers();
         }
 
-        Timesheet timesheet = new Timesheet(dateTime, subjects, classrooms, studentBatches, teachers);
+        Timesheet timesheet = new Timesheet(dateTime, subjects, classrooms, students, teachers);
 
         Timesheet saved = crudRepository.save(timesheet);
         System.out.println(saved + " is saved!");
@@ -142,7 +143,7 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
                 crudRepository.update(timesheet);
             }
             case "group" -> {
-                List<StudentBatch> currentTeachers = timesheet.getStudentBatches();
+                List<Student> currentTeachers = timesheet.getStudentBatches();
                 System.out.println("What you wanna do with student groups?\n" + "Valid options: ext(extend)|rep(replace all)|rem(remove all)");
                 switch (scan.nextLine()) {
                     case "ext" -> currentTeachers.addAll(addGroups());
@@ -180,21 +181,21 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
         return teachers;
     }
 
-    private List<StudentBatch> addGroups() {
+    private List<Student> addGroups() {
         Scanner scan = new Scanner(System.in);
-        ArrayList<StudentBatch> studentBatches = new ArrayList<>();
+        ArrayList<Student> students = new ArrayList<>();
         while (true) {
             System.out.println("Which student group?");
-            String valid = studentService.findAll().stream().map(StudentBatch::getName).collect(Collectors.joining("|", "[", "]"));
+            String valid = studentService.findAll().stream().map(Student::getName).collect(Collectors.joining("|", "[", "]"));
             System.out.printf("Valid options:%s%n> ", valid);
             String name = scan.nextLine();
             if (name.isBlank()) break;
             studentService.findByName(name).ifPresentOrElse(it -> {
-                studentBatches.add(it);
+                students.add(it);
                 System.out.printf("%s is added!%nPress ENTER to continue, or you can add more student group to this timeslot.%n", name);
             }, recordNotFound(name));
         }
-        return studentBatches;
+        return students;
     }
 
     private List<Classroom> addClassrooms() {

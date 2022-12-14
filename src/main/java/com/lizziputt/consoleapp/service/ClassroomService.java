@@ -1,6 +1,6 @@
-package com.lizziputt.timetable.classroom;
+package com.lizziputt.consoleapp.service;
 
-import com.lizziputt.timetable.SimpleMenuService;
+import com.lizziputt.timetable.classroom.Classroom;
 import com.lizziputt.timetable.jpa.CrudRepository;
 
 import java.util.Optional;

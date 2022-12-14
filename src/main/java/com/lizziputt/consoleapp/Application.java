@@ -2,11 +2,11 @@ package com.lizziputt.consoleapp;
 
 import com.lizziputt.consoleapp.menu.Menu;
 import com.lizziputt.consoleapp.menu.MenuBuilder;
-import com.lizziputt.timetable.classroom.ClassroomService;
-import com.lizziputt.timetable.student.StudentService;
-import com.lizziputt.timetable.subject.SubjectService;
-import com.lizziputt.timetable.teacher.TeacherService;
-import com.lizziputt.timetable.timesheet.TimesheetService;
+import com.lizziputt.consoleapp.service.ClassroomService;
+import com.lizziputt.consoleapp.service.StudentService;
+import com.lizziputt.consoleapp.service.SubjectService;
+import com.lizziputt.consoleapp.service.TeacherService;
+import com.lizziputt.consoleapp.service.TimesheetService;
 
 import java.io.InputStreamReader;
 import java.util.Scanner;

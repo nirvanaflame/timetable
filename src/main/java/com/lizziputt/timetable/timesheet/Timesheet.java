@@ -1,9 +1,9 @@
 package com.lizziputt.timetable.timesheet;
 
-import com.lizziputt.timetable.Printable;
+import com.lizziputt.consoleapp.service.Printable;
 import com.lizziputt.timetable.classroom.Classroom;
 import com.lizziputt.timetable.jpa.Persistable;
-import com.lizziputt.timetable.student.StudentBatch;
+import com.lizziputt.timetable.student.Student;
 import com.lizziputt.timetable.subject.Subject;
 import com.lizziputt.timetable.teacher.Teacher;
 import jakarta.persistence.*;
@@ -39,7 +39,7 @@ public class Timesheet implements Persistable<Integer> {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
     @JoinTable(name = "time_student_batch", joinColumns = { @JoinColumn(name = "timesheet_id") }, inverseJoinColumns = { @JoinColumn(name = "student_batch_id") })
-    private List<StudentBatch> studentBatches = new ArrayList<>();
+    private List<Student> studentBatches = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
     @JoinTable(name = "time_teacher", joinColumns = { @JoinColumn(name = "timesheet_id") }, inverseJoinColumns = { @JoinColumn(name = "teacher_id") })
@@ -54,11 +54,11 @@ public class Timesheet implements Persistable<Integer> {
         timesheetId = id;
     }
 
-    public Timesheet(LocalDateTime time, List<Subject> subjects, List<Classroom> classrooms, List<StudentBatch> studentBatches, List<Teacher> teachers) {
+    public Timesheet(LocalDateTime time, List<Subject> subjects, List<Classroom> classrooms, List<Student> students, List<Teacher> teachers) {
         this.time = time;
         this.subjects = subjects;
         this.classrooms = classrooms;
-        this.studentBatches = studentBatches;
+        this.studentBatches = students;
         this.teachers = teachers;
     }
 

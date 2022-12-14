@@ -1,9 +1,16 @@
 package com.lizziputt.timetable.classroom;
 
-import com.lizziputt.timetable.Printable;
+import com.lizziputt.consoleapp.service.Printable;
 import com.lizziputt.timetable.jpa.Persistable;
 import com.lizziputt.timetable.timesheet.Timesheet;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

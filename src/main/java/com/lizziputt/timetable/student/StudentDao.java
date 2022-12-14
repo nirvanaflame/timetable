@@ -3,9 +3,9 @@ package com.lizziputt.timetable.student;
 import com.lizziputt.timetable.jpa.SimpleJpaRepository;
 import jakarta.persistence.EntityManager;
 
-public class StudentBatchDao extends SimpleJpaRepository<StudentBatch, Integer> {
+public class StudentDao extends SimpleJpaRepository<Student, Integer> {
 
-    public StudentBatchDao(EntityManager em, Class<StudentBatch> domainType) {
+    public StudentDao(EntityManager em, Class<Student> domainType) {
         super(em, domainType);
     }
 }

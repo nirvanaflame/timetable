@@ -1,4 +1,4 @@
-package com.lizziputt.timetable;
+package com.lizziputt.consoleapp.service;
 
 import com.lizziputt.timetable.jpa.CrudRepository;
 import com.lizziputt.util.InputValidator;

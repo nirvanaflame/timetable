@@ -1,4 +1,4 @@
-package com.lizziputt.timetable;
+package com.lizziputt.consoleapp.service;
 
 public interface Printable {
     String print();

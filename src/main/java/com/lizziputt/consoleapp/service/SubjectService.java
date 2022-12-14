@@ -1,7 +1,7 @@
-package com.lizziputt.timetable.subject;
+package com.lizziputt.consoleapp.service;
 
-import com.lizziputt.timetable.SimpleMenuService;
 import com.lizziputt.timetable.jpa.CrudRepository;
+import com.lizziputt.timetable.subject.Subject;
 import com.lizziputt.util.StringUtils;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.lizziputt.timetable.teacher;
 
-import com.lizziputt.timetable.Printable;
+import com.lizziputt.consoleapp.service.Printable;
 import com.lizziputt.timetable.jpa.Persistable;
 import com.lizziputt.timetable.timesheet.Timesheet;
 import jakarta.persistence.*;
