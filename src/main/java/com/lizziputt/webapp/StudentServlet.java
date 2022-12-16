@@ -1,7 +1,6 @@
 package com.lizziputt.webapp;
 
 import com.lizziputt.timetable.student.Student;
-import com.lizziputt.timetable.timesheet.Timesheet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,7 +29,7 @@ public class StudentServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Timesheet> list = context.getTimesheetDao().findAll();
+        List<Student> list = context.getStudentDao().findAll();
         request.setAttribute("list", list);
         request.getRequestDispatcher(BASE_PATH + "/student.jsp").forward(request, response);
     }

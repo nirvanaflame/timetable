@@ -7,7 +7,7 @@ public interface CrudRepository<T, ID> {
 
     void delete(T entity);
 
-    // обобщение с ограничением, означает, что метод возращает тип T, либо его наследников.
+    // обобщение с ограничением, означает, что метод возвращает тип T, либо его наследников.
     <S extends T> S save(S entity);
 
     <S extends T> S update(S entity);

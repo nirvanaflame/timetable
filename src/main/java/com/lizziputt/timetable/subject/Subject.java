@@ -16,16 +16,13 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@Entity(name = "Subject")
-@Table(name = "subject")
+@Entity(name = "subject")
 public class Subject implements Persistable<Integer>, Printable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "subject_id")
     private Integer subjectId;
 
-    @Column(name = "subject_name")
     private String name;
 
     @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY)

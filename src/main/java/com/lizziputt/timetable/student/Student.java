@@ -12,24 +12,21 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 
-// Группа Студенотов
+// Группа Студентов
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@Entity(name = "StudentBatch")
-@Table(name = "sudent_batch")
+@Entity(name = "student")
 public class Student implements Persistable<Integer>, Printable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "student_batch_id")
     private Integer studentBatchId;
 
-    @Column(name = "student_batch_name")
     private String name;
 
-    @ManyToMany(mappedBy = "studentBatches", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY)
     private List<Timesheet> timesheets = new ArrayList<>();
 
     @Override

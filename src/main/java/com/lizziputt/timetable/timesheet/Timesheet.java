@@ -7,7 +7,9 @@ import com.lizziputt.timetable.student.Student;
 import com.lizziputt.timetable.subject.Subject;
 import com.lizziputt.timetable.teacher.Teacher;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,32 +19,29 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-@Entity(name = "Timesheet")
-@Table(name = "timesheet")
+@Entity(name = "timesheet")
 public class Timesheet implements Persistable<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "timesheet_id")
     private Integer timesheetId;
 
-    @Column(name = "timestamp")
     private LocalDateTime time;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
-    @JoinTable(name = "time_subject", joinColumns = { @JoinColumn(name = "timesheet_id") }, inverseJoinColumns = { @JoinColumn(name = "subject_id") })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JoinTable(name = "time_subject", joinColumns = {@JoinColumn(name = "timesheet_id")}, inverseJoinColumns = {@JoinColumn(name = "subject_id")})
     private List<Subject> subjects = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
-    @JoinTable(name = "time_classroom", joinColumns = { @JoinColumn(name = "timesheet_id") }, inverseJoinColumns = { @JoinColumn(name = "classroom_id") })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JoinTable(name = "time_classroom", joinColumns = {@JoinColumn(name = "timesheet_id")}, inverseJoinColumns = {@JoinColumn(name = "classroom_id")})
     private List<Classroom> classrooms = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
-    @JoinTable(name = "time_student_batch", joinColumns = { @JoinColumn(name = "timesheet_id") }, inverseJoinColumns = { @JoinColumn(name = "student_batch_id") })
-    private List<Student> studentBatches = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JoinTable(name = "time_student", joinColumns = {@JoinColumn(name = "timesheet_id")}, inverseJoinColumns = {@JoinColumn(name = "student_id")})
+    private List<Student> students = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
-    @JoinTable(name = "time_teacher", joinColumns = { @JoinColumn(name = "timesheet_id") }, inverseJoinColumns = { @JoinColumn(name = "teacher_id") })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JoinTable(name = "time_teacher", joinColumns = {@JoinColumn(name = "timesheet_id")}, inverseJoinColumns = {@JoinColumn(name = "teacher_id")})
     private List<Teacher> teachers = new ArrayList<>();
 
     @Override
@@ -58,7 +57,7 @@ public class Timesheet implements Persistable<Integer> {
         this.time = time;
         this.subjects = subjects;
         this.classrooms = classrooms;
-        this.studentBatches = students;
+        this.students = students;
         this.teachers = teachers;
     }
 
@@ -74,7 +73,7 @@ public class Timesheet implements Persistable<Integer> {
         return "{\n" + "\ttimesheetId:" + timesheetId + ",\n\ttime:" + time
                 + ",\n\tsubjects:[" + listView(subjects)
                 + "],\n\tclassrooms:[" + listView(classrooms)
-                + "],\n\tstudentBatches:[" + listView(studentBatches)
+                + "],\n\tstudentBatches:[" + listView(students)
                 + "],\n\tteachers:[" + listView(teachers) + "]\n}";
 
     }

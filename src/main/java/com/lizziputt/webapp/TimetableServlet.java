@@ -1,8 +1,10 @@
 package com.lizziputt.webapp;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -20,16 +22,22 @@ public class TimetableServlet extends HttpServlet {
     }
 
     @Override
+    public void destroy() {
+        context.destroy();
+    }
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LocalDate now = LocalDate.now();
         int days = now.lengthOfMonth();
         request.setAttribute("days", days);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy");
+        //        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM");
         String today = now.format(formatter);
         request.setAttribute("today", today);
 
-        request.getRequestDispatcher(BASE_PATH + "/timetable.jsp");
+        request.getRequestDispatcher(BASE_PATH + "/timetable.jsp").forward(request, response);
     }
 
     @Override

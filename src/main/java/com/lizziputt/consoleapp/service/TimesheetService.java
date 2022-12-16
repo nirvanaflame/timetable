@@ -1,21 +1,19 @@
 package com.lizziputt.consoleapp.service;
 
 import com.lizziputt.timetable.classroom.Classroom;
-import com.lizziputt.consoleapp.service.ClassroomService;
 import com.lizziputt.timetable.jpa.CrudRepository;
-import com.lizziputt.consoleapp.service.SimpleMenuService;
 import com.lizziputt.timetable.student.Student;
-import com.lizziputt.consoleapp.service.StudentService;
 import com.lizziputt.timetable.subject.Subject;
-import com.lizziputt.consoleapp.service.SubjectService;
 import com.lizziputt.timetable.teacher.Teacher;
-import com.lizziputt.consoleapp.service.TeacherService;
 import com.lizziputt.timetable.timesheet.Timesheet;
 import com.lizziputt.util.InputValidator;
 import com.lizziputt.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class TimesheetService extends SimpleMenuService<Timesheet> {
@@ -143,11 +141,11 @@ public class TimesheetService extends SimpleMenuService<Timesheet> {
                 crudRepository.update(timesheet);
             }
             case "group" -> {
-                List<Student> currentTeachers = timesheet.getStudentBatches();
+                List<Student> currentTeachers = timesheet.getStudents();
                 System.out.println("What you wanna do with student groups?\n" + "Valid options: ext(extend)|rep(replace all)|rem(remove all)");
                 switch (scan.nextLine()) {
                     case "ext" -> currentTeachers.addAll(addGroups());
-                    case "rep" -> timesheet.setStudentBatches(addGroups());
+                    case "rep" -> timesheet.setStudents(addGroups());
                     case "rem" -> currentTeachers.removeAll(addGroups());
                     default -> failOperation();
                 }

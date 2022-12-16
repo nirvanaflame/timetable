@@ -25,10 +25,11 @@ public class WebApplicationContext {
     private final TeacherDao teacherDao;
     private final TimesheetDao timesheetDao;
 
-    private final EntityManager em;
+    //    @PersistenceContext(unitName = "time")
+    private EntityManager em;
 
     public WebApplicationContext() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistence");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("time");
         em = emf.createEntityManager();
 
         classroomDao = new ClassroomDao(em, Classroom.class);
